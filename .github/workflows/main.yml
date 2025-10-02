@@ -33,14 +33,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Kubeconfig
-        uses: actions/setup-kubectl@v1
-      - run: |
+      - name: Set up Kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Configure Kubeconfig
+        run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f deployment.yml
           kubectl apply -f service.yml
           kubectl apply -f ingress.yml
           kubectl rollout status deployment/wisecow-deployment
+
